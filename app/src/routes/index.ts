@@ -22,4 +22,5 @@ router.post('/user', UserController.register);
 router.get('/user/:id', UserController.getUserById);
 
 
+
 export default router;
