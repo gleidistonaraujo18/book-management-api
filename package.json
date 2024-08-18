@@ -4,7 +4,8 @@
   "description": "Backend Book Management",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon build/index.js"
+    "dev": "nodemon build/index.js",
+    "build": "tsc"
   },
   "author": "Gleidiston Araujo",
   "license": "ISC",
