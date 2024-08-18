@@ -46,11 +46,13 @@ Uma API RESTful desenvolvida com Node.js, TypeScript e Express para gerenciar um
    - No arquivo `.env`, adicione as variáveis de ambiente para conexão com o MySQL:
 
      ```env
-     DB_HOST=localhost
-     DB_USER=root
-     DB_PASSWORD=sua-senha
-     DB_NAME=book_management_db
-     DB_PORT=3306
+        DB_USERNAME=seu_username
+        DB_PASSWORD=sua_password
+        DB_DATABASE=book_management_db
+        DB_HOST=127.0.0.1
+        DB_PORT=3306
+        DB_CONNECTION=mysql
+        DB_TIMEZONE=-03:00
      ```
 
    - Execute as migrações:
