@@ -1,0 +1,26 @@
+# Módulos do Node
+node_modules/
+
+# Saída compilada
+build/
+
+# Arquivo de variáveis de ambiente
+.env
+
+# Arquivos de log
+*.log
+
+# Arquivos específicos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos temporários de TypeScript
+*.tsbuildinfo
+
+# Arquivos específicos de editores e IDEs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
