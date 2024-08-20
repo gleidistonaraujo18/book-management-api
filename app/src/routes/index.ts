@@ -18,8 +18,9 @@ router.get('/', function (request, response) {
  * User Routes
  */
 
-router.post('/user', UserController.register);
-router.get('/user/:id', UserController.getUserById);
+router.post('/user', UserController.createUser);
+router.get('/user/:id', UserController.getById);
+router.get('/users/', UserController.getAll);
 
 
 

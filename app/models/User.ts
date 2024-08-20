@@ -1,7 +1,7 @@
 import { Model, DataTypes } from 'sequelize'
 import { sequelize } from '../database'
 
-interface UserAttributers {
+interface UserAttributes {
     id?: number,
     name: string,
     email: string,
@@ -9,7 +9,7 @@ interface UserAttributers {
     isActive: boolean
 }
 
-class User extends Model<UserAttributers> {
+class User extends Model<UserAttributes> {
     public id!: number
     public name!: string
     public email!: string
@@ -19,7 +19,7 @@ class User extends Model<UserAttributers> {
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 
-    public async getUserById(id: number): Promise<[boolean, User | string]> {
+    public static async getById(id: number): Promise<[boolean, User | string]> {
         try {
             const user = await User.findByPk(id, {
                 attributes: ['id', 'name', 'email', 'isActive', 'createdAt', 'updatedAt']
@@ -27,12 +27,16 @@ class User extends Model<UserAttributers> {
             if (!user) throw new Error("User not found");
 
             return [true, user];
-        } catch (error: any) {
-            return [false, error.message]
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                return [false, error.message];
+            }
+            return [false, "An unknown error occurred"];
         }
     }
 
-    public async register(name: string, email: string, password: string, isActive: boolean): Promise<[boolean, string]> {
+
+    public static async createUser(name: string, email: string, password: string, isActive: boolean): Promise<[boolean, string]> {
         try {
             const verifyExists = await User.findOne({ where: { email: email } });
             if (verifyExists) throw new Error("User already registered.");
@@ -41,11 +45,32 @@ class User extends Model<UserAttributers> {
             if (!user) throw new Error("Error registering user.");
 
             return [true, "User successfully registered."]
-        } catch (error: any) {
-            return [false, error.message]
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                return [false, error.message];
+            }
+            return [false, "An unknown error occurred"];
         }
     }
+
+    public static async getAll(): Promise<[boolean, User[] | string]> {
+        try {
+            const users = await User.findAll({
+                attributes: ['id', 'name', 'email', 'isActive', 'createdAt', 'updatedAt']
+            });
+            if (!users) throw new Error("No users found");
+
+            return [true, users];
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                return [false, error.message];
+            }
+            return [false, "An unknown error occurred"];
+        }
+    }
+
 }
+
 
 User.init({
     id: {

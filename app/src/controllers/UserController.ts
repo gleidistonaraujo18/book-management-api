@@ -4,14 +4,14 @@ import bcrypt from 'bcrypt';
 import { Request, Response } from "express";
 
 class UserController {
-    public static async getUserById(request: Request, response: Response) {
+    public static async getById(request: Request, response: Response) {
         try {
             const id = parseInt(request.params.id)
 
             if (isNaN(id)) {
                 throw new HttpError(400, "Invalid user ID.");
             }
-            const user = await new User().getUserById(id);
+            const user = await User.getById(id);
 
             if (user[0] === false) throw new HttpError(400, "User not found.")
 
@@ -21,7 +21,7 @@ class UserController {
         }
     }
 
-    public static async register(request: Request, response: Response) {
+    public static async createUser(request: Request, response: Response) {
         try {
             const { name, email, password, isActive } = request.body;
             if (!name || !email || !password || typeof isActive !== 'boolean') {
@@ -29,11 +29,23 @@ class UserController {
                 throw new HttpError(400, `Please fill in all required fields.: ${missingFields.join(', ')}`);
             }
             const hashPass = await bcrypt.hash(password, 10);
-            const user = await new User().register(name, email, hashPass, isActive);
+            const user = await User.createUser(name, email, hashPass, isActive);
 
             if (user[0] === false) throw new HttpError(400, user[1])
 
             return response.status(201).json({ message: user[1] });
+        } catch (error: any) {
+            return response.status(error.statusCode).json({ error: error.message });
+        }
+    }
+
+    public static async getAll(request: Request, response: Response) {
+        try {
+
+            const users = await User.getAll();
+            if (users[0] === false) throw new HttpError(400, users[1] as string)
+
+            return response.status(200).json(users[1])
         } catch (error: any) {
             return response.status(error.statusCode).json({ error: error.message });
         }
