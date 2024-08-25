@@ -21,6 +21,7 @@ router.get('/', function (request, response) {
 router.post('/user', UserController.createUser);
 router.get('/user/:id', UserController.getById);
 router.get('/users/', UserController.getAll);
+router.delete('/user/:id', UserController.delete)
 
 
 

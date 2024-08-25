@@ -17,7 +17,8 @@ class UserController {
 
             return response.status(200).json(user[1]);
         } catch (error: any) {
-            return response.status(error.statusCode).json({ error: error.message });
+            return response.status(error.statusCode || 500).json({ error: error.message || "An unknown error occurred" });
+
         }
     }
 
@@ -35,7 +36,8 @@ class UserController {
 
             return response.status(201).json({ message: user[1] });
         } catch (error: any) {
-            return response.status(error.statusCode).json({ error: error.message });
+            return response.status(error.statusCode || 500).json({ error: error.message || "An unknown error occurred" });
+
         }
     }
 
@@ -47,8 +49,28 @@ class UserController {
 
             return response.status(200).json(users[1])
         } catch (error: any) {
-            return response.status(error.statusCode).json({ error: error.message });
+            return response.status(error.statusCode || 500).json({ error: error.message || "An unknown error occurred" });
+
         }
+    }
+
+    public static async delete(request: Request, response: Response) {
+        try {
+            const id = parseInt(request.params.id)
+
+            if (isNaN(id)) {
+                throw new HttpError(400, "Invalid user ID.");
+            }
+
+            const deleteById = await User.delete(id);
+            if (deleteById[0] === false) throw new HttpError(400, deleteById[1])
+
+            return response.status(200).json({ message: deleteById[1] });
+        } catch (error: any) {
+            return response.status(error.statusCode || 500).json({ error: error.message || "An unknown error occurred" });
+
+        }
+
     }
 
 }
