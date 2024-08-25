@@ -69,6 +69,25 @@ class User extends Model<UserAttributes> {
         }
     }
 
+    public static async delete(id: number): Promise<[boolean, string]> {
+        try {
+
+            const verifyExists = await User.findByPk(id);
+            if (!verifyExists) throw new Error("User not found for delete");
+
+            const rowsDeleted = await User.destroy({ where: { id } });
+            if (!rowsDeleted) throw new Error("Error when deleting user");
+
+            return [true, "User deleted successfully"];
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                return [false, error.message];
+            }
+            return [false, "An unknown error occurred"];
+        }
+
+    }
+
 }
 
 
