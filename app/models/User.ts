@@ -9,6 +9,7 @@ interface UserAttributes {
     isActive: boolean
 }
 
+
 class User extends Model<UserAttributes> {
     public id!: number
     public name!: string
@@ -58,7 +59,7 @@ class User extends Model<UserAttributes> {
             const users = await User.findAll({
                 attributes: ['id', 'name', 'email', 'isActive', 'createdAt', 'updatedAt']
             });
-            if (!users) throw new Error("No users found");
+            if (!users) throw new Error("Failed to retrieve users");
 
             return [true, users];
         } catch (error: unknown) {
