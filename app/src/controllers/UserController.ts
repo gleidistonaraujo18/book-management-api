@@ -8,14 +8,14 @@ class UserController {
         try {
             const id = parseInt(request.params.id)
 
-            if (isNaN(id)) {
+            if (!id || isNaN(id)) {
                 throw new HttpError(400, "Invalid user ID.");
             }
-            const user = await User.getById(id);
+            const [success, message] = await User.getById(id);
 
-            if (user[0] === false) throw new HttpError(400, "User not found.")
+            if (!success) throw new HttpError(400, message as string);
 
-            return response.status(200).json(user[1]);
+            return response.status(201).json({ message });
         } catch (error: any) {
             return response.status(error.statusCode || 500).json({ error: error.message || "An unknown error occurred" });
 
@@ -30,11 +30,11 @@ class UserController {
                 throw new HttpError(400, `Please fill in all required fields.: ${missingFields.join(', ')}`);
             }
             const hashPass = await bcrypt.hash(password, 10);
-            const user = await User.createUser(name, email, hashPass, isActive);
+            const [success, message] = await User.createUser(name, email, hashPass, isActive);
 
-            if (user[0] === false) throw new HttpError(400, user[1])
+            if (!success) throw new HttpError(400, message);
 
-            return response.status(201).json({ message: user[1] });
+            return response.status(201).json({ message: message });
         } catch (error: any) {
             return response.status(error.statusCode || 500).json({ error: error.message || "An unknown error occurred" });
 
@@ -44,10 +44,10 @@ class UserController {
     public static async getAll(request: Request, response: Response) {
         try {
 
-            const users = await User.getAll();
-            if (users[0] === false) throw new HttpError(400, users[1] as string)
+            const [success, message] = await User.getAll();
+            if (!success) throw new HttpError(400, message as string)
 
-            return response.status(200).json(users[1])
+            return response.status(200).json(message)
         } catch (error: any) {
             return response.status(error.statusCode || 500).json({ error: error.message || "An unknown error occurred" });
 
@@ -58,14 +58,14 @@ class UserController {
         try {
             const id = parseInt(request.params.id)
 
-            if (isNaN(id)) {
+            if (!id || isNaN(id)) {
                 throw new HttpError(400, "Invalid user ID.");
             }
 
-            const deleteById = await User.delete(id);
-            if (deleteById[0] === false) throw new HttpError(400, deleteById[1])
+            const [success, message] = await User.delete(id);
+            if (!success) throw new HttpError(400, message);
 
-            return response.status(200).json({ message: deleteById[1] });
+            return response.status(200).json({ message: message });
         } catch (error: any) {
             return response.status(error.statusCode || 500).json({ error: error.message || "An unknown error occurred" });
 
