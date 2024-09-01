@@ -19,9 +19,10 @@ router.get('/', function (request, response) {
  */
 
 router.post('/user', UserController.createUser);
-router.get('/user/:id', UserController.getById);
-router.get('/users/', UserController.getAll);
-router.delete('/user/:id', UserController.delete)
+router.get('/user/:id?', UserController.getById);
+router.get('/users', UserController.getAll);
+router.delete('/user/:id?', UserController.delete)
+router.patch('/user/:id?', UserController.updateUserById)
 
 
 

@@ -89,6 +89,25 @@ class User extends Model<UserAttributes> {
 
     }
 
+    public static async updateUserById(id: number, data: object): Promise<[boolean, string]> {
+        try {
+            const verifyExists = await User.findByPk(id);
+            if (!verifyExists) throw new Error("User not found for update");
+
+            const update = await User.update(data, { where: { id } });
+
+            if (!update) throw new Error("Error updating user data");
+
+            return [true, "Data updated successfully."];
+
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                return [false, error.message];
+            }
+            return [false, "An unknown error occurred"];
+        }
+    }
+
 }
 
 
