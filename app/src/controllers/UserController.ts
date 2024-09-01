@@ -14,7 +14,7 @@ class UserController {
 
             if (!success) throw new HttpError(400, message as string);
 
-            return response.status(201).json({ message });
+            return response.status(200).json({ message });
         } catch (error: any) {
             return response.status(error.statusCode || 500).json({ error: error.message || "An unknown error occurred" });
 
