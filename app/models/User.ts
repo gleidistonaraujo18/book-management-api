@@ -1,5 +1,5 @@
 import { Model, DataTypes } from 'sequelize'
-import { sequelize } from '../database'
+import { sequelize } from '../config/database'
 
 interface UserAttributes {
     id?: number,
