@@ -1,12 +1,8 @@
 import express from 'express'
 import UserController from '../controllers/UserController';
+import AuthController from '../controllers/AuthController';
+import authentication from '../middlewares/AuthMiddleware';
 const router = express.Router();
-
-
-/**
- * @param {Request} request - O objeto de requisição.
- * @param {Response} response - O objeto de resposta.
- */
 
 
 router.get('/', function (request, response) {
@@ -18,11 +14,13 @@ router.get('/', function (request, response) {
  * User Routes
  */
 
-router.post('/user', UserController.createUser);
-router.get('/user/:id?', UserController.getById);
-router.get('/users', UserController.getAll);
-router.delete('/user/:id?', UserController.delete)
-router.patch('/user/:id?', UserController.updateUserById)
+router.post('/auth', AuthController.authenticate);
+
+router.post('/user', authentication, UserController.createUser);
+router.get('/user/:id?', authentication, UserController.getById);
+router.get('/users', authentication, UserController.getAll);
+router.delete('/user/:id?', authentication, UserController.delete)
+router.patch('/user/:id?', authentication, UserController.updateUserById)
 
 
 

@@ -108,6 +108,20 @@ class User extends Model<UserAttributes> {
         }
     }
 
+    public static async authenticate(email: string) {
+        try {
+            const user = await User.findOne({ where: { email: email} });
+            if (!user) throw new Error("User not found");
+
+            return [true, user];
+
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                return [false, error.message];
+            }
+            return [false, "An unknown error occurred"];
+        }
+    }
 }
 
 

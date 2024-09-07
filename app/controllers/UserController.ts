@@ -3,8 +3,13 @@ import HttpError from "../utils/Error";
 import bcrypt from 'bcrypt';
 import { Request, Response } from "express";
 import { isEmptyObject } from "../utils/ObjectValidate";
+import isInvalidEmail from "../utils/EmailValidator";
 
 class UserController {
+    /**
+     * @param {Request} request - O objeto de requisição.
+     * @param {Response} response - O objeto de resposta.
+     */
 
     public static async getById(request: Request, response: Response) {
         try {
@@ -30,6 +35,8 @@ class UserController {
                 const missingFields = ['name', 'email', 'password', 'isActive'].filter(field => !request.body[field]);
                 throw new HttpError(400, `Please fill in all required fields.: ${missingFields.join(', ')}`);
             }
+            if (isInvalidEmail(email)) throw new HttpError(400, "Invalid email format");
+
             const hashPass = await bcrypt.hash(password, 10);
             const [success, message] = await User.createUser(name, email, hashPass, isActive);
 
@@ -83,6 +90,7 @@ class UserController {
             if (isEmptyObject(request.params.id) || isNaN(Number(request.params.id))) throw new HttpError(400, "Invalid or missing ID.");
 
             if (isEmptyObject(request.body)) throw new HttpError(400, "No fields provided for update.");
+            if (isInvalidEmail(request.body.email)) throw new HttpError(400, "Invalid email format");
 
             const [success, message] = await User.updateUserById(Number(request.params.id), request.body);
 
@@ -98,6 +106,7 @@ class UserController {
     }
 
 }
+
 
 
 export default UserController;
