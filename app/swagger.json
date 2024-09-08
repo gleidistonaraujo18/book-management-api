@@ -1,0 +1,98 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Book Management API",
+        "description": "API para gerenciar livros, permitindo operações de criação, consulta, atualização e exclusão de registros.",
+        "version": "1.0.0",
+        "contact": {
+            "name": "Gleidiston Araujo",
+            "email": "gleidiston.araujo@outlook.com.br",
+            "url": "https://www.linkedin.com/in/gleidiston-ferreira-de-araujo/"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "paths": {
+        "/api/user": {
+            "post": {
+                "summary": "Cadastro de Usuário",
+                "description": "Rota responsável por cadastro de usuário.",
+                "tags": [
+                    "User"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            },
+                            "examples": {
+                                "example1": {
+                                    "summary": "Exemplo de Cadastro de Usuário",
+                                    "value": {
+                                        "name": "João da Silva",
+                                        "email": "joao.silva@example.com",
+                                        "password": "senha123",
+                                        "isActive": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User successfully registered.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error registering user.tststsc",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Dados de entrada inválidos."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    }
+                },
+                "required": ["name", "email", "password", "isActive"]
+            }
+        }
+    }
+}
