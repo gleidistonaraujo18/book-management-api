@@ -15,11 +15,11 @@ class UserController {
         try {
             if (isEmptyObject(request.params.id) || isNaN(Number(request.params.id))) throw new HttpError(400, "Invalid or missing ID.");
 
-            const [success, message] = await User.getById(Number(request.params.id));
+            const [success, user] = await User.getById(Number(request.params.id));
 
-            if (!success) throw new HttpError(400, message as string);
+            if (!success) throw new HttpError(404, user as string);
 
-            return response.status(200).json({ message });
+            return response.status(200).json({ user });
         } catch (error: unknown) {
             if (error instanceof HttpError) {
                 return response.status(error.statusCode).json({ error: error.message });
