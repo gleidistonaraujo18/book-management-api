@@ -2,6 +2,7 @@ import express from 'express'
 import UserController from '../controllers/UserController';
 import AuthController from '../controllers/AuthController';
 import authentication from '../middlewares/AuthMiddleware';
+import BookController from '../controllers/BookController';
 const router = express.Router();
 
 
@@ -22,6 +23,11 @@ router.get('/users', authentication, UserController.getAll);
 router.delete('/user/:id?', authentication, UserController.delete)
 router.patch('/user/:id?', authentication, UserController.updateUserById)
 
+/*
+ * Books Routes
+ */
+
+router.post('/book', authentication, BookController.createBook);
 
 
 export default router;
