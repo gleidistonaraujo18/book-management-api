@@ -28,17 +28,48 @@ module.exports = {
         allowNull: true,
       },
       description: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: true,
       },
-      price: {
+      availableStock: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      totalStock: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      reservedStock: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      minimumStock: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      lastRestockDate: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      costPrice: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+      },
+      salePrice: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+      },
+      tax: {
         type: Sequelize.FLOAT,
         allowNull: true,
       },
-      stockQuantity: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-        allowNull: false,
+      category: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      publisher: {
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -52,7 +83,6 @@ module.exports = {
       },
     });
   },
-
 
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('books');

@@ -1,4 +1,4 @@
-import { Model, DataTypes, where } from 'sequelize'
+import { Model, DataTypes, Op } from 'sequelize'
 import { sequelize } from '../config/database'
 
 interface BookAttributes {
@@ -8,21 +8,114 @@ interface BookAttributes {
     isbn: string;
     publicationDate?: Date;
     description?: string;
-    price?: number;
-    stockQuantity: number;
+    availableStock: number;
+    totalStock: number;
+    reservedStock: number;
+    minimumStock: number;
+    lastRestockDate: Date;
+    costPrice: number;
+    salePrice: number;
+    tax?: number;
+    category?: string;
+    publisher?: string;
 }
 
 class Book extends Model<BookAttributes> {
-    public static async createBook(title: string, author: string, isbn: string, publicationDate: Date, description: string, price: number, stockQuantity: number): Promise<[boolean, string]> {
+
+    public id!: number;
+    public title!: string;
+    public uthor!: string;
+    public isbn!: string;
+    public publicationDate!: Date;
+    public description!: string;
+    public availableStock!: number;
+    public totalStock!: number;
+    public reservedStock!: number;
+    public minimumStock!: number;
+    public lastRestockDate!: Date;
+    public costPrice!: number;
+    public salePrice!: number;
+    public tax!: number;
+    public category!: string;
+    public publisher!: string;
+    
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
+
+    public static async getById(id: number): Promise<[boolean, object | string]> {
         try {
+            const book = await Book.findByPk(id);
+            if (!book) throw new Error("Book not found");
 
-            if (await Book.findOne({ where: { isbn: isbn } })) throw new Error("ISBN already exists");
+            return [true, book];
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                return [false, error.message];
+            }
+            return [false, "An unexpected error occurred"];
+        }
+    }
 
-            if (await Book.findOne({ where: { title: title } })) throw new Error("Title already exists");
+    public static async getAll(): Promise<[boolean, Book[] | string]> {
+        try {
+            const books = await Book.findAll();
+            if (books.length === 0) throw new Error("No books found.");
 
-            await Book.create({ title, author, isbn, publicationDate, description, price, stockQuantity })
+            return [true, books];
+
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                return [false, error.message];
+            }
+            return [false, "An unexpected error occurred"];
+        }
+    }
+
+    public static async createBook(title: string, author: string, isbn: string, publicationDate: Date, description: string, availableStock: number, totalStock: number, reservedStock: number, minimumStock: number, lastRestockDate: Date, costPrice: number, salePrice: number, tax: number, category: string, publisher: string): Promise<[boolean, string]> {
+        try {
+            const existingBook = await Book.findOne({ where: { [Op.or]: [{ isbn }, { title }] } });
+
+            if (existingBook) {
+                if (existingBook.isbn === isbn) throw new Error("ISBN already exists");
+                if (existingBook.title === title) throw new Error("Title already exists");
+            }
+
+            await Book.create({ title, author, isbn, publicationDate, description, availableStock, totalStock, reservedStock, minimumStock, lastRestockDate, costPrice, salePrice, tax, category, publisher })
 
             return [true, "Book registered successfully"]
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                return [false, error.message];
+            }
+            return [false, "An unknown error occurred"];
+        }
+    }
+
+    public static async updateBook(id: number, data: object): Promise<[boolean, string]> {
+        try {
+
+            if (!await Book.findByPk(id)) throw new Error("Book not found for update");
+
+            await Book.update(data, { where: { id } });
+
+            return [true, "Data updated successfully."];
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                return [false, error.message];
+            }
+            return [false, "An unknown error occurred"];
+        }
+
+    }
+
+    public static async deleteBook(id: number): Promise<[boolean, string]> {
+        try {
+            if (!await Book.findByPk(id)) throw new Error("Book not found for delete");
+
+            await Book.destroy({ where: { id: id } });
+
+            return [true, "Book deleted successfully"];
+
         } catch (error: unknown) {
             if (error instanceof Error) {
                 return [false, error.message];
@@ -60,15 +153,49 @@ Book.init({
         type: DataTypes.TEXT,
         allowNull: true,
     },
-    price: {
+    availableStock: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    totalStock: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    reservedStock: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    minimumStock: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    lastRestockDate: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
+    costPrice: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+    },
+    salePrice: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+    },
+    tax: {
         type: DataTypes.FLOAT,
         allowNull: true,
     },
-    stockQuantity: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
-        allowNull: false,
-    }
+    category: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    publisher: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
 }, { sequelize, tableName: "books" })
 
 
