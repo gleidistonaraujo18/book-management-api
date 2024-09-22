@@ -39,11 +39,9 @@ class User extends Model<UserAttributes> {
 
     public static async createUser(name: string, email: string, password: string, isActive: boolean): Promise<[boolean, string]> {
         try {
-            const verifyExists = await User.findOne({ where: { email: email } });
-            if (verifyExists) throw new Error("User already registered.");
+            if (await User.findOne({ where: { email: email } })) throw new Error("User already registered.");
 
-            const user = await User.create({ name, email, password, isActive });
-            if (!user) throw new Error("Error registering user.");
+            await User.create({ name, email, password, isActive });
 
             return [true, "User successfully registered."]
         } catch (error: unknown) {
@@ -72,12 +70,9 @@ class User extends Model<UserAttributes> {
 
     public static async delete(id: number): Promise<[boolean, string]> {
         try {
+            if (!await User.findByPk(id)) throw new Error("User not found for delete");
 
-            const verifyExists = await User.findByPk(id);
-            if (!verifyExists) throw new Error("User not found for delete");
-
-            const rowsDeleted = await User.destroy({ where: { id } });
-            if (!rowsDeleted) throw new Error("Error when deleting user");
+            await User.destroy({ where: { id } });
 
             return [true, "User deleted successfully"];
         } catch (error: unknown) {
@@ -89,17 +84,14 @@ class User extends Model<UserAttributes> {
 
     }
 
-    public static async updateUserById(id: number, data: object): Promise<[boolean, string]> {
+    public static async updateUser(id: number, data: object): Promise<[boolean, string]> {
         try {
             const verifyExists = await User.findByPk(id);
             if (!verifyExists) throw new Error("User not found for update");
 
-            const update = await User.update(data, { where: { id } });
-
-            if (!update) throw new Error("Error updating user data");
+            await User.update(data, { where: { id } });
 
             return [true, "Data updated successfully."];
-
         } catch (error: unknown) {
             if (error instanceof Error) {
                 return [false, error.message];
@@ -110,7 +102,7 @@ class User extends Model<UserAttributes> {
 
     public static async authenticate(email: string) {
         try {
-            const user = await User.findOne({ where: { email: email} });
+            const user = await User.findOne({ where: { email: email } });
             if (!user) throw new Error("User not found");
 
             return [true, user];

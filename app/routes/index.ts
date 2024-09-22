@@ -21,13 +21,17 @@ router.post('/user', authentication, UserController.createUser);
 router.get('/user/:id?', authentication, UserController.getById);
 router.get('/users', authentication, UserController.getAll);
 router.delete('/user/:id?', authentication, UserController.delete)
-router.patch('/user/:id?', authentication, UserController.updateUserById)
+router.patch('/user/:id?', authentication, UserController.updateUser)
 
 /*
  * Books Routes
  */
 
+router.get('/books', authentication, BookController.getAll);
+router.get('/book/:id?', authentication, BookController.getById);
 router.post('/book', authentication, BookController.createBook);
+router.patch('/book/:id?', authentication, BookController.updateBook);
+router.delete('/book/:id?', authentication, BookController.deleteBook);
 
 
 export default router;
