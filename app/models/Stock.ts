@@ -1,14 +1,13 @@
 import { Model, DataTypes, Op } from 'sequelize'
 import { sequelize } from '../config/database'
 
-interface BookAttributes {
+interface StockAttributes {
     id?: number;
     title: string;
     author: string;
     isbn: string;
     publicationDate?: Date;
     description?: string;
-    availableStock: number;
     totalStock: number;
     reservedStock: number;
     minimumStock: number;
@@ -20,15 +19,14 @@ interface BookAttributes {
     publisher?: string;
 }
 
-class Book extends Model<BookAttributes> {
+class Stock extends Model<StockAttributes> {
 
     public id!: number;
     public title!: string;
-    public uthor!: string;
+    public author!: string;
     public isbn!: string;
     public publicationDate!: Date;
     public description!: string;
-    public availableStock!: number;
     public totalStock!: number;
     public reservedStock!: number;
     public minimumStock!: number;
@@ -38,16 +36,16 @@ class Book extends Model<BookAttributes> {
     public tax!: number;
     public category!: string;
     public publisher!: string;
-    
+
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 
     public static async getById(id: number): Promise<[boolean, object | string]> {
         try {
-            const book = await Book.findByPk(id);
-            if (!book) throw new Error("Book not found");
+            const stock = await Stock.findByPk(id);
+            if (!stock) throw new Error("Stock not found");
 
-            return [true, book];
+            return [true, stock];
         } catch (error: unknown) {
             if (error instanceof Error) {
                 return [false, error.message];
@@ -56,12 +54,12 @@ class Book extends Model<BookAttributes> {
         }
     }
 
-    public static async getAll(): Promise<[boolean, Book[] | string]> {
+    public static async getAll(): Promise<[boolean, Stock[] | string]> {
         try {
-            const books = await Book.findAll();
-            if (books.length === 0) throw new Error("No books found.");
+            const stocks = await Stock.findAll();
+            if (stocks.length === 0) throw new Error("No stocks found.");
 
-            return [true, books];
+            return [true, stocks];
 
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -71,18 +69,18 @@ class Book extends Model<BookAttributes> {
         }
     }
 
-    public static async createBook(title: string, author: string, isbn: string, publicationDate: Date, description: string, availableStock: number, totalStock: number, reservedStock: number, minimumStock: number, lastRestockDate: Date, costPrice: number, salePrice: number, tax: number, category: string, publisher: string): Promise<[boolean, string]> {
+    public static async createStock(title: string, author: string, isbn: string, publicationDate: Date, description: string, totalStock: number, reservedStock: number, minimumStock: number, lastRestockDate: Date, costPrice: number, salePrice: number, tax: number, category: string, publisher: string): Promise<[boolean, string]> {
         try {
-            const existingBook = await Book.findOne({ where: { [Op.or]: [{ isbn }, { title }] } });
+            const existingStock = await Stock.findOne({ where: { [Op.or]: [{ isbn }, { title }] } });
 
-            if (existingBook) {
-                if (existingBook.isbn === isbn) throw new Error("ISBN already exists");
-                if (existingBook.title === title) throw new Error("Title already exists");
+            if (existingStock) {
+                if (existingStock.isbn === isbn) throw new Error("ISBN already exists");
+                if (existingStock.title === title) throw new Error("Title already exists");
             }
 
-            await Book.create({ title, author, isbn, publicationDate, description, availableStock, totalStock, reservedStock, minimumStock, lastRestockDate, costPrice, salePrice, tax, category, publisher })
+            await Stock.create({ title, author, isbn, publicationDate, description, totalStock, reservedStock, minimumStock, lastRestockDate, costPrice, salePrice, tax, category, publisher })
 
-            return [true, "Book registered successfully"]
+            return [true, "Stock registered successfully"]
         } catch (error: unknown) {
             if (error instanceof Error) {
                 return [false, error.message];
@@ -91,12 +89,12 @@ class Book extends Model<BookAttributes> {
         }
     }
 
-    public static async updateBook(id: number, data: object): Promise<[boolean, string]> {
+    public static async updateStock(id: number, data: object): Promise<[boolean, string]> {
         try {
 
-            if (!await Book.findByPk(id)) throw new Error("Book not found for update");
+            if (!await Stock.findByPk(id)) throw new Error("Stock not found for update");
 
-            await Book.update(data, { where: { id } });
+            await Stock.update(data, { where: { id } });
 
             return [true, "Data updated successfully."];
         } catch (error: unknown) {
@@ -108,13 +106,13 @@ class Book extends Model<BookAttributes> {
 
     }
 
-    public static async deleteBook(id: number): Promise<[boolean, string]> {
+    public static async deleteStock(id: number): Promise<[boolean, string]> {
         try {
-            if (!await Book.findByPk(id)) throw new Error("Book not found for delete");
+            if (!await Stock.findByPk(id)) throw new Error("Stock not found for delete");
 
-            await Book.destroy({ where: { id: id } });
+            await Stock.destroy({ where: { id: id } });
 
-            return [true, "Book deleted successfully"];
+            return [true, "Stock deleted successfully"];
 
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -125,7 +123,7 @@ class Book extends Model<BookAttributes> {
     }
 }
 
-Book.init({
+Stock.init({
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -152,11 +150,6 @@ Book.init({
     description: {
         type: DataTypes.TEXT,
         allowNull: true,
-    },
-    availableStock: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
     },
     totalStock: {
         type: DataTypes.INTEGER,
@@ -196,7 +189,7 @@ Book.init({
         type: DataTypes.STRING,
         allowNull: true,
     },
-}, { sequelize, tableName: "books" })
+}, { sequelize, tableName: "stock" })
 
 
-export default Book;
+export default Stock;

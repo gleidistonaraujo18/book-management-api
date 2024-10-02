@@ -1,16 +1,16 @@
 import { Request, Response } from 'express'
 import HttpError from '../utils/Error';
 import { IsbnValidator } from '../utils/IsbnValidator';
-import Book from '../models/Book';
+import Stock from '../models/Stock';
 import { ValidationFields } from '../utils/ValidationFields';
 import { isEmptyObject } from "../utils/ObjectValidate";
 
-class BookController {
+class StockController {
 
     public static async getById(request: Request, response: Response) {
         try {
             if (isEmptyObject(request.params.id) || isNaN(Number(request.params.id))) throw new HttpError(400, "Invalid or missing ID.");
-            const [success, message] = await Book.getById(Number(request.params.id));
+            const [success, message] = await Stock.getById(Number(request.params.id));
             if (!success) throw new HttpError(400, message as string);
 
             return response.status(200).json(message)
@@ -25,7 +25,7 @@ class BookController {
     public static async getAll(request: Request, response: Response) {
         try {
 
-            const [success, message] = await Book.getAll();
+            const [success, message] = await Stock.getAll();
             if (!success) throw new HttpError(400, message as string)
 
             return response.status(200).json(message)
@@ -38,17 +38,17 @@ class BookController {
         }
     }
 
-    public static async createBook(request: Request, response: Response) {
+    public static async createStock(request: Request, response: Response) {
         try {
-            const { title, author, isbn, publicationDate, description, availableStock, totalStock, reservedStock, minimumStock, lastRestockDate, costPrice, salePrice, tax, category, publisher } = request.body
+            const { title, author, isbn, publicationDate, description, totalStock, reservedStock, minimumStock, lastRestockDate, costPrice, salePrice, tax, category, publisher } = request.body
 
             if (isEmptyObject(request.body)) throw new HttpError(400, "No fields provided for created.")
 
-            ValidationFields.validateRequiredFields({ title, author, isbn, availableStock, totalStock, minimumStock, lastRestockDate, costPrice, salePrice });
+            ValidationFields.validateRequiredFields({ title, author, isbn, totalStock, minimumStock, lastRestockDate, costPrice, salePrice });
 
             if (!IsbnValidator.isValid(isbn)) throw new HttpError(400, "ISBN is invalid.")
 
-            const [status, string] = await Book.createBook(title, author, isbn, publicationDate, description, availableStock, totalStock, reservedStock, minimumStock, lastRestockDate, costPrice, salePrice, tax, category, publisher)
+            const [status, string] = await Stock.createStock(title, author, isbn, publicationDate, description, totalStock, reservedStock, minimumStock, lastRestockDate, costPrice, salePrice, tax, category, publisher)
 
             if (!status) throw new HttpError(400, string);
 
@@ -61,13 +61,13 @@ class BookController {
         }
     }
 
-    public static async updateBook(request: Request, response: Response) {
+    public static async updateStock(request: Request, response: Response) {
         try {
             if (isEmptyObject(request.params.id) || isNaN(Number(request.params.id))) throw new HttpError(400, "Invalid or missing ID.");
 
             if (isEmptyObject(request.body)) throw new HttpError(400, "No fields provided for update.");
 
-            const [success, message] = await Book.updateBook(Number(request.params.id), request.body);
+            const [success, message] = await Stock.updateStock(Number(request.params.id), request.body);
 
             if (!success) throw new HttpError(400, message);
 
@@ -82,11 +82,11 @@ class BookController {
 
     }
 
-    public static async deleteBook(request: Request, response: Response) {
+    public static async deleteStock(request: Request, response: Response) {
         try {
             if (isEmptyObject(request.params.id) || isNaN(Number(request.params.id))) throw new HttpError(400, "Invalid or missing ID.");
 
-            const [success, message] = await Book.deleteBook(Number(request.params.id));
+            const [success, message] = await Stock.deleteStock(Number(request.params.id));
             if (!success) throw new HttpError(400, message);
 
             return response.status(200).json({ message: message });
@@ -101,4 +101,4 @@ class BookController {
     }
 }
 
-export default BookController;
+export default StockController;

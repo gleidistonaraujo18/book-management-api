@@ -2,7 +2,7 @@ import express from 'express'
 import UserController from '../controllers/UserController';
 import AuthController from '../controllers/AuthController';
 import authentication from '../middlewares/AuthMiddleware';
-import BookController from '../controllers/BookController';
+import StockController from '../controllers/StockController';
 const router = express.Router();
 
 
@@ -24,14 +24,15 @@ router.delete('/user/:id?', authentication, UserController.delete)
 router.patch('/user/:id?', authentication, UserController.updateUser)
 
 /*
- * Books Routes
+ * Stock Routes
  */
 
-router.get('/books', authentication, BookController.getAll);
-router.get('/book/:id?', authentication, BookController.getById);
-router.post('/book', authentication, BookController.createBook);
-router.patch('/book/:id?', authentication, BookController.updateBook);
-router.delete('/book/:id?', authentication, BookController.deleteBook);
+router.get('/stocks', authentication, StockController.getAll);
+router.get('/stock/:id?', authentication, StockController.getById);
+router.post('/stock', authentication, StockController.createStock);
+router.patch('/stock/:id?', authentication, StockController.updateStock);
+router.delete('/stock/:id?', authentication, StockController.deleteStock);
+
 
 
 export default router;
